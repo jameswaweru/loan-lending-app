@@ -25,7 +25,7 @@ public class LoanProduct {
 
     private double loanProductMinLimit;
 
-    private double interestPercentage;
+    private double tenureRate;
 
     private int tenure;
 

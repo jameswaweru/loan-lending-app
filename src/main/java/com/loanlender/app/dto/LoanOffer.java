@@ -8,7 +8,7 @@ public class LoanOffer {
 //    private double interestRate;
 //    private int tenure;
 
-    private int loanId;
+    private int offerCode;
     private double tenureInterestRate;
     private int numberOfDays;
     private double dailyPayment;

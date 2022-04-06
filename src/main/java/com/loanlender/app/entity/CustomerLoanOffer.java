@@ -1,6 +1,7 @@
 package com.loanlender.app.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.loanlender.app.enums.LoanOfferStatus;
 import lombok.Data;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
@@ -12,18 +13,24 @@ import java.util.Date;
 @Data
 @Entity
 @ToString
-@Table(name = "customers")
-public class Customer {
-
+@Table(name = "customerLoanOffers")
+public class CustomerLoanOffer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int loanOfferId;
+
+    private double tenureInterestRate;
+    private int numberOfDays;
+    private double dailyPayment;
+    private double totalPayment;
+    private double loanAmount;
+
     private int customerId;
 
-    private String customerName;
+    private String offerCode;
 
-    private String msisdn;
-
-    private double loanLimit;
+    @Enumerated(value = EnumType.STRING)
+    private LoanOfferStatus loanOfferStatus;
 
     @CreationTimestamp
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
@@ -32,6 +39,5 @@ public class Customer {
     @UpdateTimestamp
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date dateModified;
-
 
 }
