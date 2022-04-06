@@ -1,9 +1,9 @@
 package com.loanlender.app.controller;
 
 import com.loanlender.app.configs.LoanProperties;
-import com.loanlender.app.dto.Loan;
 import com.loanlender.app.dto.LoanDetails;
 import com.loanlender.app.dto.LoanOffer;
+import com.loanlender.app.dto.MobileWallet;
 import com.loanlender.app.dto.requests.ChangeCustomerLimit;
 import com.loanlender.app.dto.requests.LoanApplication;
 import com.loanlender.app.entity.Customer;
@@ -123,36 +123,26 @@ public class LoansController {
 
         LoanDetails customerInitialLoanDetails = Utilities.processInitialCustomerLoanDetails(loanApplication);
 
-
-        //process loan details
-        //LoanDetails calculatedLoanDetails = processLoanDetails.calculateLoanDetails(customerInitialLoanDetails);
-
         //calculate loan offers
         List<LoanOffer> loanOffers = processLoanOffers.getCustomerLoanOffers(customerDetails,customerInitialLoanDetails,loanProperties);
 
 
         response.put("statusCode" , HttpStatus.OK.value());
-        response.put("statusDescription", "Select the loan that suits you ");
+        response.put("statusDescription", "Reply with offer code to select the loan product ");
         response.put("data", loanOffers);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
+    @PostMapping("acceptLoanOffer")
+    public ResponseEntity<String> acceptLoanOffer(@RequestBody LoanOffer loanOffer) throws RequestException {
+        String creditWalletResponse = new MobileWallet(loanOffer.getLoanAmount()).checkStatus();
+        if(creditWalletResponse.equals("failed")){
+            return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body("Failed");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Success");
     }
 
 
-
-    @PostMapping("test")
-    public ResponseEntity<Object> test(@RequestBody LoanApplication loanApplication) throws RequestException {
-        Map<String, Object> response = new HashMap<>();
-
-        log.debug("test loan calc : {}",loanApplication);
-
-        Loan loan = new Loan(10,1,1000);
-
-        response.put("loan",loan);
-
-
-        return new ResponseEntity<>(response , HttpStatus.OK);
-    }
 
 
 

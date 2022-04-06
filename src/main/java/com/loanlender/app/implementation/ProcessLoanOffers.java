@@ -3,8 +3,10 @@ package com.loanlender.app.implementation;
 import com.loanlender.app.configs.LoanProperties;
 import com.loanlender.app.dto.LoanDetails;
 import com.loanlender.app.dto.LoanOffer;
+import com.loanlender.app.dto.requests.LoanProductConversionConfigs;
 import com.loanlender.app.entity.Customer;
 import com.loanlender.app.interfaces.GetCustomerLoanOffers;
+import com.loanlender.app.utils.LoanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -40,36 +42,52 @@ public class ProcessLoanOffers implements GetCustomerLoanOffers {
 
         List<LoanOffer> loanOffers = new ArrayList<>();
         loanAmount = loanDetails.getLoanAmount();
-//        tenureRate = loanDetails.getTenureRate();
-//        tenure = loanDetails.getTenure();
+        tenureRate = loanDetails.getTenureRate(); //per month
+        tenure = loanDetails.getTenure(); // days
 
-        //reduce rate by 3/4 , reduce repayment days by given value and calculate new loan Details, do this for
+        LoanProductConversionConfigs conversionRates = LoanUtils.getLoanProductConversionConfigs(loanAmount,tenure, tenureRate, loanProperties);
 
-        tenureRate = loanDetails.getTenureRate() * loanProperties.getReducingRate();
-        tenure = loanDetails.getTenure() - loanProperties.getTenureReductionDays();
+        //based on the initial amount stated by customer & the primary loan product conversion rates
+        LoanOffer initialLoanOffer = new LoanOffer();
+        //initialLoanOffer.setDailyPayment(conversionRates.getDailyPayment());
+        initialLoanOffer.setLoanAmount(loanAmount);
+        initialLoanOffer.setNumberOfDays(tenure);
+        initialLoanOffer.setOfferCode(getRandomCode());
+        initialLoanOffer.setTenureInterestRate(tenureRate);
+
+        double loanOfferAmount = LoanUtils.calculateLoanAmountWithIncreasedTenureAndReducedDailyPayment(
+                conversionRates.getDailyInterestRate(),
+                conversionRates.getTenureTermInDays(),
+                conversionRates.getDailyPayment(),
+                loanProperties
+                );
 
         LoanOffer firstLoanOffer = new LoanOffer();
-        firstLoanOffer.setDailyPayment(getDailyPayment());
-        firstLoanOffer.setLoanAmount(loanDetails.getLoanAmount());
-        firstLoanOffer.setNumberOfDays(tenure);
+        //firstLoanOffer.setDailyPayment(conversionRates.getDailyPayment());
+        firstLoanOffer.setLoanAmount(loanOfferAmount);
+        firstLoanOffer.setNumberOfDays(tenure+loanProperties.getTenureAdditionDays());
         firstLoanOffer.setOfferCode(getRandomCode());
         firstLoanOffer.setTenureInterestRate(tenureRate);
-        firstLoanOffer.setTotalPayment(getTotalPayment());
+//        firstLoanOffer.setTotalPayment(getTotalPayment());
 
         loanOffers.add(firstLoanOffer);
 
-        //lower tenure & tenure rate
-        tenureRate = tenureRate * loanProperties.getReducingRate();
-        tenure = tenure - loanProperties.getTenureReductionDays();
+        double secondLoanOfferAmount = LoanUtils.calculateLoanAmountWithReducedTenureAndIncreasedDailyPayment(
+                conversionRates.getDailyInterestRate(),
+                conversionRates.getTenureTermInDays(),
+                conversionRates.getDailyPayment(),
+                loanProperties
+        );
+
 
 
         LoanOffer secondLoanOffer = new LoanOffer();
-        secondLoanOffer.setDailyPayment(getDailyPayment());
-        secondLoanOffer.setLoanAmount(loanDetails.getLoanAmount());
-        secondLoanOffer.setNumberOfDays(tenure);
+        //secondLoanOffer.setDailyPayment(conversionConfigs.getDailyPayment());
+        secondLoanOffer.setLoanAmount(secondLoanOfferAmount);
+        secondLoanOffer.setNumberOfDays(tenure-loanProperties.getTenureReductionDays());
         secondLoanOffer.setOfferCode(getRandomCode());
         secondLoanOffer.setTenureInterestRate(tenureRate);
-        secondLoanOffer.setTotalPayment(getTotalPayment());
+//        secondLoanOffer.setTotalPayment(getTotalPayment());
 
         loanOffers.add(secondLoanOffer);
 
@@ -77,19 +95,6 @@ public class ProcessLoanOffers implements GetCustomerLoanOffers {
     }
 
 
-    /** Find daily payment */
-    private double getDailyPayment() {
-         double dailyInterestRate = tenureRate / (tenure * 100);
-         double dailyPayment = loanAmount * dailyInterestRate / (1 -
-                (1 / Math.pow(1 + dailyInterestRate, tenure)));
-        return dailyPayment;
-    }
-
-    /** Find total payment */
-    private double getTotalPayment() {
-        double totalPayment = getDailyPayment()* tenure;
-        return totalPayment;
-    }
 
     private int getRandomCode(){
         int min = 1000;

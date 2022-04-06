@@ -16,6 +16,6 @@ public class MobileWallet {
             return "failed";
         }
 
-        return "Success";
+        return "success";
     }
 }
