@@ -15,10 +15,10 @@ import java.util.List;
 @Service
 public class ProcessLoanOffers implements GetCustomerLoanOffers {
 
-    private double tenureRate; //annualInterestRate;
+    private double tenureRate; //monthlyInterestRate;
     private double dailyInterestRate;
     private double dailyPayment;
-    private int  tenure;   //numberOfYears;
+    private double  tenure;   //numberOfMonths;
     private double loanAmount;
 
 

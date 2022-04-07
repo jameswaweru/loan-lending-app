@@ -14,7 +14,7 @@ public class LoanUtils {
      * @return
      */
     public static LoanProductConversionConfigs getLoanProductConversionConfigs(
-            double loanAmount, int termInMonths, double interestRate, LoanProperties loanProperties) {
+            double loanAmount, double termInMonths, double interestRate, LoanProperties loanProperties) {
 
         LoanProductConversionConfigs conversionConfigs = new LoanProductConversionConfigs();
 
@@ -31,7 +31,7 @@ public class LoanUtils {
         // The length of the term in days
         // is the number of months times 30
 
-        int termInDays = termInMonths * 30;
+        double termInDays = termInMonths * 30;
         conversionConfigs.setTenureTermInDays(termInDays);
 
         // Calculate the monthly payment
@@ -47,7 +47,7 @@ public class LoanUtils {
         return conversionConfigs;
     }
 
-    public static double calculateLoanAmountWithIncreasedTenureAndReducedDailyPayment(double dailyRate , int termInDays, double dailyPayment, LoanProperties loanProperties){
+    public static double calculateLoanAmountWithIncreasedTenureAndReducedDailyPayment(double dailyRate , double termInDays, double dailyPayment, LoanProperties loanProperties){
         termInDays = termInDays + loanProperties.getTenureAdditionDays();
         dailyPayment = dailyPayment * loanProperties.getReducingRate();
         double loanAmount = (dailyPayment * (1-Math.pow(1+dailyRate, -termInDays)) ) / dailyRate;
@@ -56,7 +56,7 @@ public class LoanUtils {
 
 
 
-    public static double calculateLoanAmountWithReducedTenureAndIncreasedDailyPayment(double dailyRate , int termInDays, double dailyPayment, LoanProperties loanProperties){
+    public static double calculateLoanAmountWithReducedTenureAndIncreasedDailyPayment(double dailyRate , double termInDays, double dailyPayment, LoanProperties loanProperties){
         termInDays = termInDays - loanProperties.getTenureReductionDays();
         dailyPayment = dailyPayment * loanProperties.getIncrementRate();
         double loanAmount = (dailyPayment * (1-Math.pow(1+dailyRate, -termInDays)) ) / dailyRate;

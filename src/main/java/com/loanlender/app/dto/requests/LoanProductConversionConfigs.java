@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class LoanProductConversionConfigs {
     double dailyInterestRate;
-    int tenureTermInDays;
+    double tenureTermInDays;
     double dailyPayment;
 }

@@ -7,5 +7,5 @@ public class LoanApplication {
     private String customerMobile;
     private double loanAmount;
     private double tenureRate;
-    private int tenure;
+    private double tenure;
 }

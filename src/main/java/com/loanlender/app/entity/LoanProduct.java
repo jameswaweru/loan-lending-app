@@ -27,7 +27,7 @@ public class LoanProduct {
 
     private double tenureRate;
 
-    private int tenure;
+    private double tenure;
 
     @CreationTimestamp
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")

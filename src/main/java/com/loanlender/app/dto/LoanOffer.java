@@ -6,7 +6,7 @@ import lombok.Data;
 public class LoanOffer {
     private int offerCode;
     private double tenureInterestRate;
-    private int numberOfDays;
+    private double numberOfDays;
     private double loanAmount;
 
 }
