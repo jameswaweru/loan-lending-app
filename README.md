@@ -8,7 +8,8 @@ This limit can however be updated.
 ### Assumptions
 
 Interest rate is compounded on Monthly Basis (Per month)
-Tenure is given in days
+
+Tenure is given Months(in calculation), but please note for loan offers we are returning tenure in days 
 
 
 Loan offers are calculated using this protocol
